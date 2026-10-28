@@ -1,0 +1,1 @@
+[Math] Dimensions calculated: X=1024, Y=768, Z=∞

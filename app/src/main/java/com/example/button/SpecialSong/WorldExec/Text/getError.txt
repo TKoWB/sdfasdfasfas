@@ -1,0 +1,2 @@
+[ERROR] 0x000000F: NullPointerException at world.entity.You
+[ERROR] Memory leak detected in emotional_subroutine.dll

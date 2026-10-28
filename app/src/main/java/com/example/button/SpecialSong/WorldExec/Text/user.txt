@@ -1,0 +1,7 @@
+﻿================================================
+        WORLD.EXECUTE(ME) TERMINAL v1.0
+================================================
+[SYSTEM] Terminal interface initialized.
+[SYSTEM] Audio engine status: READY
+[SYSTEM] Type 'run world.exec' to begin.
+================================================

@@ -1,0 +1,3 @@
+[WorldSettings] Validity: FALSE
+[WorldSettings] Telemetry: FALSE
+[WorldSettings] Simulation: ACTIVE

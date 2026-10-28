@@ -1,0 +1,108 @@
+LUONG DU LIEU CHAY PROGRAM VA MO PHONG PREMIUM
+
+1. NHAN NUT CHAY PROGRAM
+
+Co hai nut co the bat dau luong nay:
+
+A. Nut RUN TERMINAL trong the bai hat
+
+SongItemCard
+  -> onClick = { onPlayTerminalClick() }
+  -> SpecialMusicListScreen xu ly callback onPlayTerminalClick
+     [app/src/main/java/com/example/button/ui/screens/SpecialMusicListScreen.kt:276]
+
+B. Nut RUN TERMINAL o thanh duoi sau khi chon bai hat
+
+Nut trong SpecialMusicListScreen
+  -> kiem tra isPremium truc tiep
+     [app/src/main/java/com/example/button/ui/screens/SpecialMusicListScreen.kt:349]
+
+Hai nut deu kiem tra cung mot gia tri isPremium:
+
+if (isPremium)?
+  |
+  +-- Co Premium
+  |     -> Dung MediaPlayer dang phat preview
+  |     -> Dat isPreviewPlaying = false
+  |     -> Dat isRunningTerminal = true
+  |     -> Compose cap nhat giao dien
+  |     -> Nhanh if (isRunningTerminal) duoc chay
+  |        [app/src/main/java/com/example/button/ui/screens/SpecialMusicListScreen.kt:105]
+  |     -> Goi TerminalScreen(...)
+  |        [app/src/main/java/com/example/button/SpecialSong/WorldExec/TerminalScreen.kt:45]
+  |
+  +-- Chua co Premium
+        -> Dat showPremiumDialog = true
+        -> Hien AlertDialog "Yeu cau Premium"
+           [app/src/main/java/com/example/button/ui/screens/SpecialMusicListScreen.kt:379]
+        -> Noi dung thong bao: chuc nang yeu cau tai khoan Premium,
+           co the mo khoa Premium o trang chu
+        -> Dialog chi co nut "Dong"
+        -> Dong dialog: showPremiumDialog = false
+        -> Quay lai man hinh danh sach nhac
+
+
+LUONG BEN TRONG TERMINALSCREEN
+
+TerminalScreen duoc mo
+  -> Doc noi dung ban dau tu user.txt
+     [app/src/main/java/com/example/button/SpecialSong/WorldExec/TerminalScreen.kt:81]
+  -> Nguoi dung nhap lenh
+  -> submitCommand()
+     [app/src/main/java/com/example/button/SpecialSong/WorldExec/TerminalScreen.kt:103]
+  -> Kiem tra lenh co phai "run world.exec" khong
+     |
+     +-- Khong dung
+     |     -> Ghi thong bao Access denied
+     |     -> Khong chay program
+     |
+     +-- Dung
+           -> Nap file nhac ghost.mp3
+              [app/src/main/java/com/example/button/SpecialSong/WorldExec/TerminalScreen.kt:123]
+           -> Tao WorldEngine va truyen context, MediaPlayer
+              va cac callback cap nhat log/giao dien
+              [app/src/main/java/com/example/button/SpecialSong/WorldExec/TerminalScreen.kt:129]
+           -> Goi worldEngine.runWorldExecuteMe()
+              [app/src/main/java/com/example/button/SpecialSong/WorldExec/TerminalScreen.kt:151]
+           -> WorldEngine chay noi dung program, phat nhac,
+              doc cac file asset va cap nhat log
+              [app/src/main/java/com/example/button/SpecialSong/WorldExec/WorldEngine.kt:147]
+           -> Ket thuc: dem nguoc 5 giay
+           -> Goi onBackClick()
+           -> SpecialMusicListScreen dat isRunningTerminal = false
+           -> Quay lai danh sach nhac
+
+
+2. NHAN NUT MO PHONG MO KHOA PREMIUM
+
+Nut "Mo phong mo khoa Premium" tren trang chu
+  -> MainScreen goi callback onPurchasePremium
+     [app/src/main/java/com/example/button/ui/screens/MainScreen.kt:41]
+  -> NavGraph noi callback voi premiumAccessManager.simulatePurchase()
+     [app/src/main/java/com/example/button/ui/navigation/NavGraph.kt:48]
+  -> PremiumAccessManager.simulatePurchase()
+     [app/src/main/java/com/example/button/premium/PremiumAccessManager.kt:11]
+  -> Dat isPremium = true
+  -> isPremium la Compose state, Compose phat hien thay doi va ve lai UI
+     |
+     +-- MainScreen hien "Premium gia lap da kich hoat"
+     +-- NavGraph truyen isPremium = true sang SpecialMusicListScreen
+     +-- Bam RUN TERMINAL se vao nhanh Premium va mo TerminalScreen
+     +-- GlobalAdsHost nhan isPremium = true va an quang cao
+
+
+NOI LUU TRANG THAI PREMIUM GIA LAP
+
+ButtonApplication tao va giu PremiumAccessManager trong pham vi
+ung dung:
+  [app/src/main/java/com/example/button/ButtonApplication.kt:6]
+
+Khi thoat han ung dung:
+  MainActivity.onDestroy()
+    -> Neu isFinishing thi goi premiumAccessManager.resetSession()
+       [app/src/main/java/com/example/button/MainActivity.kt:25]
+    -> PremiumAccessManager dat isPremium = false
+       [app/src/main/java/com/example/button/premium/PremiumAccessManager.kt:15]
+
+Trang thai nay chi la mo khoa gia lap trong phien app hien tai.
+Khong co giao dich that va khong goi Google Play Billing.

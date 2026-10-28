@@ -1,0 +1,1 @@
+[Sensor] Resonant frequency matched at 432Hz.
